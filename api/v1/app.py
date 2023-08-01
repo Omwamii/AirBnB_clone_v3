@@ -7,7 +7,7 @@ from flask import jsonify
 from models import storage
 
 app = Flask(__name__)
-app.register_blueprint(app_views, url_prefix="/api/v1")
+app.register_blueprint(app_views)
 
 
 @app.teardown_appcontext
@@ -19,12 +19,7 @@ def teardown_db(res_or_except):
 
 if __name__ == "__main__":
     from os import environ as env
-    if env.get('HBNB_API_HOST'):
-        host = env.get('HBNB_API_HOST')
-    else:
-        host = '0.0.0.0'
-    if env.get('HBNB_API_PORT'):
-        port = env.get('HBNB_API_PORT')
-    else:
-        port = '5000'
+    env_host, env_port = env.get('HBNB_API_HOST'), env.get('HBNB_API_PORT')
+    host = env_host if env_host else '0.0.0.0'
+    port = env_port if env_port else '5000'
     app.run(host=host, port=int(port), threaded=True)
