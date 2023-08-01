@@ -10,6 +10,14 @@ app = Flask(__name__)
 app.register_blueprint(app_views)
 
 
+@app.errorhandler(404)
+def page_not_found(error):
+    """ render json 'not found'
+    """
+    err = {"error": "Not found"}
+    return jsonify(err)
+
+
 @app.teardown_appcontext
 def teardown_db(res_or_except):
     """ remove the currenct SQLAlchemy session
