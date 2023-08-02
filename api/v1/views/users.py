@@ -1,20 +1,20 @@
 #!/usr/bin/python3
-""" View to handle all Amenity objects
+""" View to handle all User objects
 """
 from api.v1.views import app_views
 from flask import abort
 from flask import jsonify
 from flask import request
-from models.amenity import Amenity
+from models.user import User
 from models import storage
 
 
-@app_views.route('/amenities', defaults={"amenity_id": None},
+@app_views.route('/users', defaults={"user_id": None},
                  methods=['GET', 'POST'], strict_slashes=False)
-@app_views.route('/amenities/<string:amenity_id>',
+@app_views.route('/users/<string:user_id>',
                  methods=['GET', 'DELETE', 'PUT'], strict_slashes=False)
-def amenities(amenity_id):
-    """ operate on Amenity objects
+def users(user_id):
+    """ operate on User objects
     """
     if request.method == "POST":
         try:
@@ -24,30 +24,34 @@ def amenities(amenity_id):
         else:
             if 'name' not in api_req:
                 abort(400, description="Missing name")
+            elif 'email' not in api_req:
+                abort(400, description="Missing email")
+            elif 'password' not in api_req:
+                abort(400, description="Missing password")
             else:
                 # create object and return status code 201
-                obj = Amenity(**api_req)
+                obj = User(**api_req)
                 storage.new(obj)
                 storage.save()
                 return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
-        if amenity_id is None:
-            # return all Amenity objects
-            all_amenities = storage.all(Amenity)
-            amenities = list()
-            for val in all_amenities.values():
-                amenities.append(val.to_dict())
-            return jsonify(amenities)
+        if user_id is None:
+            # return all User objects
+            all_users = storage.all(User)
+            users = list()
+            for val in all_users.values():
+                users.append(val.to_dict())
+            return jsonify(users)
         else:
-            # get state with specific amenity_id
-            obj = storage.get(Amenity, amenity_id)
+            # get user with specific user_id
+            obj = storage.get(User, user_id)
             if obj is None:
                 abort(404)
             return jsonify(obj.to_dict())
     if request.method == "DELETE":
         # try get the object with specific id
-        obj = storage.get(Amenity, amenity_id)
+        obj = storage.get(User, user_id)
         # if object doesn't exist raise 404 error
         if obj is None:
             abort(404)
@@ -56,8 +60,8 @@ def amenities(amenity_id):
         storage.save()
         return jsonify({}), 200
     if request.method == "PUT":
-        # if state_id not linked to any State, raise 404
-        obj = storage.get(Amenity, amenity_id)
+        # if state_id not linked to any User, raise 404
+        obj = storage.get(User, user_id)
         if obj is None:
             abort(404)
         try:
@@ -66,9 +70,9 @@ def amenities(amenity_id):
             # if not valid json raise 400 with 'Not a JSON'
             abort(400, description="Not a JSON")
         else:
-            # update State obj with the key-val pairs
+            # update User obj with the key-val pairs
             for key, val in api_req.items():
-                if key not in ("id", "created_at", "updated_at"):
+                if key not in ("id", "created_at", "updated_at", "email"):
                     setattr(obj, key, val)
             storage.save()
-            return jsonify(storage.get(Amenity, amenity_id).to_dict()), 200
+            return jsonify(storage.get(User, user_id).to_dict()), 200
