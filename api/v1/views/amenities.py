@@ -1,22 +1,20 @@
 #!/usr/bin/python3
-""" View to handle all City objects
+""" View to handle all Amenity objects
 """
 from api.v1.views import app_views
 from flask import abort
 from flask import jsonify
 from flask import request
-from models.city import City
-from models.state import State
+from models.amenity import Amenity
 from models import storage
 
 
-@app_views.route('/states/<string:state_id>/cities',
-                 defaults={"city_id": None},
+@app_views.route('/amenities', defaults={"amenity_id": None},
                  methods=['GET', 'POST'], strict_slashes=False)
-@app_views.route('/cities/<string:city_id>', defaults={"state_id": None},
+@app_views.route('/amenities/<string:amenity_id>',
                  methods=['GET', 'DELETE', 'PUT'], strict_slashes=False)
-def cities(state_id, city_id):
-    """ operate on City objects
+def states(amenity_id):
+    """ operate on State objects
     """
     if request.method == "POST":
         try:
@@ -28,45 +26,39 @@ def cities(state_id, city_id):
                 abort(400, description="Missing name")
             else:
                 # create object and return status code 201
-                state = storage.get(State, state_id)
-                if state is None:
-                    abort(404)
-                api_req['state_id'] = state_id
-                obj = City(**api_req)
+                obj = Amenity(**api_req)
                 storage.new(obj)
                 storage.save()
                 return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
-        if state_id is not None:
-            # retrieve State object with id
-            state = storage.get(State, state_id)
-            if state is None:
-                abort(404)
-            linked_cities = list()
-            cities = state.cities
-            for city in cities:
-                linked_cities.append(city.to_dict())
-            return jsonify(linked_cities)
+        if amenity_id is None:
+            # return all Amenity objects
+            all_amenities = storage.all(Amenity)
+            amenities = list()
+            for val in all_amenities.values():
+                amenities.append(val.to_dict())
+            return jsonify(amenities)
         else:
-            city = storage.get(City, city_id)
-            if city is None:
+            # get state with specific amenity_id
+            obj = storage.get(Amenity, amenity_id)
+            if obj is None:
                 abort(404)
-            return jsonify(city.to_dict())
+            return jsonify(obj.to_dict())
     if request.method == "DELETE":
         # try get the object with specific id
-        city = storage.get(City, city_id)
-        # if city doesn't exist raise 404 error
-        if city is None:
+        obj = storage.get(Amenity, amenity_id)
+        # if object doesn't exist raise 404 error
+        if obj is None:
             abort(404)
         # if found delete object and return empty dict with status 200
-        storage.delete(city)
+        storage.delete(obj)
         storage.save()
         return jsonify({}), 200
     if request.method == "PUT":
-        # if city_id not linked to any city, raise 404
-        city = storage.get(City, city_id)
-        if city is None:
+        # if state_id not linked to any State, raise 404
+        obj = storage.get(Amenity, amenity_id)
+        if obj is None:
             abort(404)
         try:
             api_req = request.get_json()
@@ -77,6 +69,6 @@ def cities(state_id, city_id):
             # update State obj with the key-val pairs
             for key, val in api_req.items():
                 if key not in ("id", "created_at", "updated_at"):
-                    setattr(city, key, val)
+                    setattr(obj, key, val)
             storage.save()
-            return jsonify(storage.get(City, city_id).to_dict()), 200
+            return jsonify(storage.get(Amenity, amenity_id).to_dict()), 200
