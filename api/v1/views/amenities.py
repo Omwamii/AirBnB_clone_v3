@@ -40,7 +40,7 @@ def amenities(amenity_id):
                 amenities.append(val.to_dict())
             return jsonify(amenities)
         else:
-            # get state with specific amenity_id
+            # get amenity with specific amenity_id
             obj = storage.get(Amenity, amenity_id)
             if obj is None:
                 abort(404)
@@ -56,7 +56,7 @@ def amenities(amenity_id):
         storage.save()
         return jsonify({}), 200
     if request.method == "PUT":
-        # if state_id not linked to any State, raise 404
+        # if amenity_id not linked to any Amenity, raise 404
         obj = storage.get(Amenity, amenity_id)
         if obj is None:
             abort(404)
@@ -66,7 +66,7 @@ def amenities(amenity_id):
             # if not valid json raise 400 with 'Not a JSON'
             abort(400, description="Not a JSON")
         else:
-            # update State obj with the key-val pairs
+            # update Amenity obj with the key-val pairs
             for key, val in api_req.items():
                 if key not in ("id", "created_at", "updated_at"):
                     setattr(obj, key, val)
