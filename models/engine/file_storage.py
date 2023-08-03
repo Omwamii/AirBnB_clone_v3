@@ -45,6 +45,7 @@ class FileStorage:
         json_objects = {}
         for key in self.__objects:
             json_objects[key] = self.__objects[key].to_dict()
+            # ^ add true flag to to_dict()? - hashed password is being saved
         with open(self.__file_path, 'w') as f:
             json.dump(json_objects, f)
 
