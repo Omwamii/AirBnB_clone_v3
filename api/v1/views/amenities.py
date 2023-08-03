@@ -17,19 +17,17 @@ def amenities(amenity_id):
     """ operate on Amenity objects
     """
     if request.method == "POST":
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             abort(400, description="Not a JSON")
+        if 'name' not in api_req:
+            abort(400, description="Missing name")
         else:
-            if 'name' not in api_req:
-                abort(400, description="Missing name")
-            else:
-                # create object and return status code 201
-                obj = Amenity(**api_req)
-                storage.new(obj)
-                storage.save()
-                return jsonify(obj.to_dict()), 201
+            # create object and return status code 201
+            obj = Amenity(**api_req)
+            storage.new(obj)
+            storage.save()
+            return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
         if amenity_id is None:
@@ -60,9 +58,8 @@ def amenities(amenity_id):
         obj = storage.get(Amenity, amenity_id)
         if obj is None:
             abort(404)
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             # if not valid json raise 400 with 'Not a JSON'
             abort(400, description="Not a JSON")
         else:
