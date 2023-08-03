@@ -17,19 +17,17 @@ def states(state_id):
     """ operate on State objects
     """
     if request.method == "POST":
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_jon()
+        if api_req is None:
             abort(400, description="Not a JSON")
+        if 'name' not in api_req:
+            abort(400, description="Missing name")
         else:
-            if 'name' not in api_req:
-                abort(400, description="Missing name")
-            else:
-                # create object and return status code 201
-                obj = State(**api_req)
-                storage.new(obj)
-                storage.save()
-                return jsonify(obj.to_dict()), 201
+            # create object and return status code 201
+            obj = State(**api_req)
+            storage.new(obj)
+            storage.save()
+            return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
         if state_id is None:
@@ -60,10 +58,8 @@ def states(state_id):
         obj = storage.get(State, state_id)
         if obj is None:
             abort(404)
-        try:
-            api_req = request.get_json()
-        except Exception:
-            # if not valid json raise 400 with 'Not a JSON'
+        api_req = request.get_json()
+        if api_req is None:
             abort(400, description="Not a JSON")
         else:
             # update State obj with the key-val pairs
