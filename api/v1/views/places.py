@@ -26,7 +26,7 @@ def places(place_id, city_id):
         if 'name' not in api_req:
             abort(400, description="Missing name")
         elif 'user_id' not in api_req:
-                abort(400, description="Missing user_id")
+            abort(400, description="Missing user_id")
         else:
             # check if city_id is linked to any city obj
             city = storage.get(City, city_id)
