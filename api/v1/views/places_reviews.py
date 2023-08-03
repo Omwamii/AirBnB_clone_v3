@@ -20,12 +20,6 @@ def reviews(review_id, place_id):
     """ operate on Review objects
     """
     if request.method == "POST":
-        place = storage.get(Place, place_id)
-        if place is None:
-            abort(404)
-        user = storage.get(User, api_req['user_id'])
-        if user is None:
-            abort(404)
         api_req = request.get_json()
         if api_req is None:
             abort(400, description="Not a JSON")
@@ -34,6 +28,12 @@ def reviews(review_id, place_id):
         if 'text' not in api_req:
             abort(400, description="Missing text")
         else:
+            place = storage.get(Place, place_id)
+            if place is None:
+                abort(404)
+            user = storage.get(User, api_req['user_id'])
+            if user is None:
+                abort(404)
             api_req['place_id'] = place_id
             obj = Review(**api_req)
             storage.new(obj)
