@@ -19,23 +19,21 @@ def cities(state_id, city_id):
     """ operate on City objects
     """
     if request.method == "POST":
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             abort(400, description="Not a JSON")
+        if 'name' not in api_req:
+            abort(400, description="Missing name")
         else:
-            if 'name' not in api_req:
-                abort(400, description="Missing name")
-            else:
-                # create object and return status code 201
-                state = storage.get(State, state_id)
-                if state is None:
-                    abort(404)
-                api_req['state_id'] = state_id
-                obj = City(**api_req)
-                storage.new(obj)
-                storage.save()
-                return jsonify(obj.to_dict()), 201
+            # create object and return status code 201
+            state = storage.get(State, state_id)
+            if state is None:
+                abort(404)
+            api_req['state_id'] = state_id
+            obj = City(**api_req)
+            storage.new(obj)
+            storage.save()
+            return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
         if state_id is not None:
@@ -68,9 +66,8 @@ def cities(state_id, city_id):
         city = storage.get(City, city_id)
         if city is None:
             abort(404)
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             # if not valid json raise 400 with 'Not a JSON'
             abort(400, description="Not a JSON")
         else:
