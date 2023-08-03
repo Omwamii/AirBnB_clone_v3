@@ -22,9 +22,9 @@ def users(user_id):
             abort(400, description="Not a JSON")
         if 'name' not in api_req:
             abort(400, description="Missing name")
-        elif 'email' not in api_req:
+        if 'email' not in api_req:
             abort(400, description="Missing email")
-        elif 'password' not in api_req:
+        if 'password' not in api_req:
             abort(400, description="Missing password")
         else:
             # create object and return status code 201
