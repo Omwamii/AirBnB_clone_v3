@@ -20,31 +20,29 @@ def places(place_id, city_id):
     """ operate on Place objects
     """
     if request.method == "POST":
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             abort(400, description="Not a JSON")
-        else:
-            if 'name' not in api_req:
-                abort(400, description="Missing name")
-            elif 'user_id' not in api_req:
+        if 'name' not in api_req:
+            abort(400, description="Missing name")
+        elif 'user_id' not in api_req:
                 abort(400, description="Missing user_id")
-            else:
-                # check if city_id is linked to any city obj
-                city = storage.get(City, city_id)
-                if city is None:
-                    abort(404)
-                # check if user_id is linked to any user
-                user = storage.get(User, api_req['user_id'])
-                if user is None:
-                    abort(404)
-                api_req['city_id'] = city_id
+        else:
+            # check if city_id is linked to any city obj
+            city = storage.get(City, city_id)
+            if city is None:
+                abort(404)
+            # check if user_id is linked to any user
+            user = storage.get(User, api_req['user_id'])
+            if user is None:
+                abort(404)
+            api_req['city_id'] = city_id
 
-                # create place and return status 201
-                obj = Place(**api_req)
-                storage.new(obj)
-                storage.save()
-                return jsonify(obj.to_dict()), 201
+            # create place and return status 201
+            obj = Place(**api_req)
+            storage.new(obj)
+            storage.save()
+            return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
         if city_id is not None:
@@ -77,9 +75,8 @@ def places(place_id, city_id):
         place = storage.get(Place, place_id)
         if place is None:
             abort(404)
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             # if not valid json raise 400 with 'Not a JSON'
             abort(400, description="Not a JSON")
         else:
