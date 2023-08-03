@@ -25,9 +25,9 @@ def reviews(review_id, place_id):
             abort(400, description="Not a JSON")
         if 'name' not in api_req:
             abort(400, description="Missing name")
-        elif 'user_id' not in api_req:
+        if 'user_id' not in api_req:
             abort(400, description="Missing user_id")
-        elif 'text' not in api_req:
+        if 'text' not in api_req:
             abort(400, description="Missing text")
         else:
             place = storage.get(Place, place_id)
