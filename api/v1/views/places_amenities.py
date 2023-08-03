@@ -17,7 +17,7 @@ from os import environ as env
                  methods=['GET'], strict_slashes=False)
 @app_views.route('places/<string:place_id>/amenities/<string:amenity_id>',
                  methods=['POST', 'DELETE'], strict_slashes=False)
-def reviews(amenity_id, place_id):
+def places_amenities(amenity_id, place_id):
     """ operate on linked amenities to Place objects
     """
     place = storage.get(Place, place_id)
