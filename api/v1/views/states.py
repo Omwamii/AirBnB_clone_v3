@@ -17,7 +17,7 @@ def states(state_id):
     """ operate on State objects
     """
     if request.method == "POST":
-        api_req = request.get_jon()
+        api_req = request.get_json()
         if api_req is None:
             abort(400, description="Not a JSON")
         if 'name' not in api_req:
