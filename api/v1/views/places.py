@@ -16,7 +16,7 @@ from models import storage
                  methods=['GET', 'POST'], strict_slashes=False)
 @app_views.route('/places/<string:place_id>', defaults={"city_id": None},
                  methods=['GET', 'DELETE', 'PUT'], strict_slashes=False)
-def cities(place_id, city_id):
+def places(place_id, city_id):
     """ operate on Place objects
     """
     if request.method == "POST":
