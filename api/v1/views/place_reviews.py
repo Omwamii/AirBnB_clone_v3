@@ -20,29 +20,27 @@ def reviews(state_id, city_id):
     """ operate on Review objects
     """
     if request.method == "POST":
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             abort(400, description="Not a JSON")
+        if 'name' not in api_req:
+            abort(400, description="Missing name")
+        elif 'user_id' not in api_req:
+            abort(400, description="Missing user_id")
+        elif 'text' not in api_req:
+            abort(400, description="Missing text")
         else:
-            if 'name' not in api_req:
-                abort(400, description="Missing name")
-            elif 'user_id' not in api_req:
-                abort(400, description="Missing user_id")
-            elif 'text' not in api_req:
-                abort(400, description="Missing text")
-            else:
-                place = storage.get(Place, place_id)
-                if state is None:
-                    abort(404)
-                user = storage.get(User, api_req['user_id'])
-                if user is None:
-                    abort(404)
-                api_req['place_id'] = place_id
-                obj = Review(**api_req)
-                storage.new(obj)
-                storage.save()
-                return jsonify(obj.to_dict()), 201
+            place = storage.get(Place, place_id)
+            if place is None:
+                abort(404)
+            user = storage.get(User, api_req['user_id'])
+            if user is None:
+                abort(404)
+            api_req['place_id'] = place_id
+            obj = Review(**api_req)
+            storage.new(obj)
+            storage.save()
+            return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
         if place_id is not None:
@@ -71,9 +69,8 @@ def reviews(state_id, city_id):
         storage.save()
         return jsonify({}), 200
     if request.method == "PUT":
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             # if not valid json raise 400 with 'Not a JSON'
             abort(400, description="Not a JSON")
         else:
