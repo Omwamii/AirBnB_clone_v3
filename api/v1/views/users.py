@@ -17,23 +17,21 @@ def users(user_id):
     """ operate on User objects
     """
     if request.method == "POST":
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             abort(400, description="Not a JSON")
+        if 'name' not in api_req:
+            abort(400, description="Missing name")
+        elif 'email' not in api_req:
+            abort(400, description="Missing email")
+        elif 'password' not in api_req:
+            abort(400, description="Missing password")
         else:
-            if 'name' not in api_req:
-                abort(400, description="Missing name")
-            elif 'email' not in api_req:
-                abort(400, description="Missing email")
-            elif 'password' not in api_req:
-                abort(400, description="Missing password")
-            else:
-                # create object and return status code 201
-                obj = User(**api_req)
-                storage.new(obj)
-                storage.save()
-                return jsonify(obj.to_dict()), 201
+            # create object and return status code 201
+            obj = User(**api_req)
+            storage.new(obj)
+            storage.save()
+            return jsonify(obj.to_dict()), 201
 
     if request.method == "GET":
         if user_id is None:
@@ -60,13 +58,12 @@ def users(user_id):
         storage.save()
         return jsonify({}), 200
     if request.method == "PUT":
-        # if state_id not linked to any User, raise 404
+        # if user_id not linked to any User, raise 404
         obj = storage.get(User, user_id)
         if obj is None:
             abort(404)
-        try:
-            api_req = request.get_json()
-        except Exception:
+        api_req = request.get_json()
+        if api_req is None:
             # if not valid json raise 400 with 'Not a JSON'
             abort(400, description="Not a JSON")
         else:
