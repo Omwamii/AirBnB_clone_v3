@@ -20,8 +20,6 @@ def users(user_id):
         api_req = request.get_json()
         if api_req is None:
             abort(400, description="Not a JSON")
-        if 'name' not in api_req:
-            abort(400, description="Missing name")
         if 'email' not in api_req:
             abort(400, description="Missing email")
         if 'password' not in api_req:
