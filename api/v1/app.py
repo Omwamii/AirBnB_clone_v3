@@ -15,7 +15,7 @@ def page_not_found(error):
     """ render json 'not found'
     """
     err = {"error": "Not found"}
-    return jsonify(err)
+    return jsonify(err), 404
 
 
 @app.teardown_appcontext
