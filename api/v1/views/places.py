@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-""" View to handle search for Place objects
-"""
 from api.v1.views import app_views
 from flask import abort
 from flask import jsonify
