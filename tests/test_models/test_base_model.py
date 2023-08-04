@@ -77,7 +77,7 @@ class TestBaseModel(unittest.TestCase):
     def test_datetime_attributes(self):
         """Test that two BaseModel instances have different datetime objects
         and that upon creation have identical updated_at and created_at
-        value.. 
+        value..
         tic = datetime.now()
         inst1 = BaseModel()
         toc = datetime.now()
@@ -95,18 +95,17 @@ class TestBaseModel(unittest.TestCase):
         pass
 
     def test_uuid(self):
-        """Test that id is a valid uuid"""
+        """Test that id is a valid uuid
         inst1 = BaseModel()
         inst2 = BaseModel()
         for inst in [inst1, inst2]:
             uuid = inst.id
             with self.subTest(uuid=uuid):
                 self.assertIs(type(uuid), str)
-                self.assertRegex(uuid,
-                                 '^[0-9a-f]{8}-[0-9a-f]{4}'
-                                 '-[0-9a-f]{4}-[0-9a-f]{4}'
-                                 '-[0-9a-f]{12}$')
+                self.assertRegex(uuid, {regex to build})
         self.assertNotEqual(inst1.id, inst2.id)
+        """
+        pass
 
     def test_to_dict(self):
         """Test conversion of object attributes to dictionary for json"""

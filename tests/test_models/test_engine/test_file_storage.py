@@ -31,10 +31,7 @@ class TestFileStorageDocs(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print('\n\n.................................')
-        print('..... Testing Documentation .....')
-        print('..... For FileStorage Class .....')
-        print('.................................\n\n')
+        pass
 
     def tearDownClass():
         """tidies up the tests removing storage objects"""
@@ -78,10 +75,6 @@ class TestBmFsInstances(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """sets up the class"""
-        print('\n\n.................................')
-        print('...... Testing FileStorate ......')
-        print('..... For FileStorage Class .....')
-        print('.................................\n\n')
         cls.bm_obj = BaseModel()
         cls.state_obj = State(name="Illinois")
         cls.bm_obj.save()
@@ -186,10 +179,6 @@ class TestUserFsInstances(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """sets up the class"""
-        print('\n\n.................................')
-        print('...... Testing FileStorage ......')
-        print('.......... User  Class ..........')
-        print('.................................\n\n')
         cls.user = User()
         cls.user.save()
         cls.bm_obj = BaseModel()

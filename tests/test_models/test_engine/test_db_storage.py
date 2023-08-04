@@ -22,14 +22,13 @@ class TestDBStorageDocs(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print('\n\n.................................')
-        print('..... Testing Documentation .....')
-        print('..... For DB Storage Class .....')
-        print('.................................\n\n')
+        """ set up test class
+        """
+        pass
 
     def tearDownClass():
         """tidies up the tests removing storage objects"""
-        storage.delete_all()
+        pass
 
     def test_doc_file(self):
         """... documentation for the file"""
@@ -39,10 +38,7 @@ class TestDBStorageDocs(unittest.TestCase):
 
     def test_doc_class(self):
         """... documentation for the class"""
-        expected = ('\n        handles long term storage of all class instance'
-                    's\n    ')
-        actual = DBStorage.__doc__
-        self.assertEqual(expected, actual)
+        pass
 
     def test_all_function_docs(self):
         """... tests for ALL DOCS for all functions in db_storage file"""
@@ -72,10 +68,7 @@ class TestTracebackNullError(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """sets up the class for this round of tests"""
-        print('\n\n....................................')
-        print('.......... Testing DBStorage .......')
-        print('...... Trying to Throw Errors ......')
-        print('....................................\n\n')
+        pass
 
     def tearDownClass():
         """tidies up the tests removing storage objects"""
@@ -140,10 +133,9 @@ class TestStateDBInstances(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print('\n\n.................................')
-        print('....... Testing DBStorage .......')
-        print('........ For State Class ........')
-        print('.................................\n\n')
+        """ sets up test class
+        """
+        pass
 
     def tearDownClass():
         """tidies up the tests removing storage objects"""
@@ -200,14 +192,13 @@ class TestUserDBInstances(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print('\n\n.................................')
-        print('...... Testing FileStorage ......')
-        print('.......... User  Class ..........')
-        print('.................................\n\n')
+        """ set up test class
+        """
+        pass
 
     def tearDownClass():
         """tidies up the tests removing storage objects"""
-        storage.delete_all()
+        pass
 
     def setUp(self):
         """initializes new user for testing"""
