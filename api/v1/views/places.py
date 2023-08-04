@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+""" view to handle Place objects
+"""
 from api.v1.views import app_views
 from flask import abort
 from flask import jsonify
