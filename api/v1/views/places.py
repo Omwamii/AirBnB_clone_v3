@@ -8,7 +8,10 @@ from flask import request
 from models.city import City
 from models.place import Place
 from models.user import User
+from models.amenity import Amenity
+from models.state import State
 from models import storage
+from os import environ as env
 
 
 @app_views.route('/cities/<string:city_id>/places',
@@ -87,3 +90,78 @@ def places(place_id, city_id):
                     setattr(place, key, val)
             storage.save()
             return jsonify(storage.get(Place, place_id).to_dict()), 200
+
+
+@app_views.route("/places_search", methods=['POST'], strict_slashes=False)
+def search_places():
+    """ retrieves all places depending on the JSON in the request body
+    """
+    req_body = request.get_json()
+    if req_body is None:  # not valid JSON
+        abort(400, description="Not a JSON")
+    place_objs = list()
+    if len(req_body) == 0:
+        # JSON body is empty, retrieve all Place objs
+        all_places = storage.all(Place)
+        for val in all_places.values():
+            place_objs.append(val.to_dict())
+    else:
+        states = req_body['states']
+        cities = req_body['cities']
+        if req_body.get('amenities'):
+            amenity_obj_ids = req_body['amenities']
+        else:
+            amenity_obj_ids = []
+        if len(states) == 0 and len(cities) == 0:
+            # return all Place objects
+            all_places = storage.all(Place)
+            for val in all_Places.values():
+                place_objs.append(val.to_dict())
+        else:
+            city_objs = list()
+            for state in states:
+                st_obj = storage.get(State, state)
+                if st_obj is None:
+                    print(f"State: ({state}) not found")
+                    abort(404)
+                st_city_objs = st_obj.cities
+                for city in st_city_objs:
+                    city_objs.append(city)
+            for city in cities:
+                ct_obj = storage.get(City, city)
+                if ct_obj is None:
+                    print(f"City: ({city}) not found")
+                    abort(404)
+                if ct_obj not in city_objs:
+                    city_objs.append(ct_obj)
+            for city_obj in city_objs:
+                for place in city_obj.places:
+                    place_objs.append(place)
+            if len(amenity_obj_ids) != 0:
+                # filter place objects to those with set amenities
+                to_filter = list()
+                if env.get('HBNB_TYPE_STORAGE') == "db":
+                    amenity_objs = list()
+                    for amenity_id in amenity_obj_ids:
+                        am_obj = storage.get(Amenity, amenity_id)
+                        if am_obj is None:
+                            print(f"Amenity: ({amenity_id}) not found")
+                            abort(404)
+                        amenity_objs.append(am_obj)
+                    for index, pl_obj in enumerate(place_objs):
+                        for amenity in amenity_objs:
+                            if amenity not in pl_obj.amenities:
+                                to_filter.append(index)
+                else:  # FileStorage
+                    for index, pl_obj in enumerate(place_objs):
+                        for amenity in amenity_obj_ids:
+                            if amenity not in pl_obj.amenity_ids:
+                                to_filter.append(index)
+                # trav in rev to delete objs without affecting their positions
+                for ind in reversed(to_filter):
+                    # filter place objs without the amenities
+                    place_objs.pop(ind)
+            place_objs_info = list()
+            for pl_obj in place_objs:
+                place_objs_info.append(pl_obj.to_dict())
+            return jsonify(place_objs_info)
