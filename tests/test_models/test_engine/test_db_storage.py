@@ -9,6 +9,7 @@ import inspect
 from os import environ, stat
 import pep8
 from models.base_model import Base
+from models.state import State
 from models.engine.db_storage import DBStorage
 
 STORAGE_TYPE = environ.get('HBNB_TYPE_STORAGE')
